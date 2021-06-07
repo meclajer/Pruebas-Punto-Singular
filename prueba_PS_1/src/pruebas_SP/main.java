@@ -36,7 +36,7 @@ public class main {
 		
 		//Recorrer la palabra para comparar la cantidad de letras, si ya fue contada no se vuelve a contar
 		letras = palabra.toCharArray();
-		for (int i = 0; i < letras.length; i++) {//recorre la palabra
+		for (int i = 0; i < letras.length; i++) {
 			if ( !evaluadas.contains( letras[i] ) ) {				
 				for (int j = 0; j < letras.length; j++) {
 					if (letras[i] == letras[j]) {
