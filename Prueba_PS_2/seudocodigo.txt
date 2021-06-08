@@ -1,0 +1,308 @@
+2 PROGRAMA PARA DIVIDIR POR SILABAS
+
+// Solicitar la palabra que se dividira por silabas
+
+
+// Cargar la palabra a una variable
+
+
+// dividir la palabra por letras, en un arreglo
+
+
+// detectar las vocales y su ubicacion asi como la cantidad de consonantes entre vocales
+
+
+// tomando el dato de cantidad de consonantes entre vocales dirigir a la regla que le pertenece (1 a 4)
+
+
+	// REGLA 1 (una consonante entre vocal)
+
+
+		// bucle para recorrer la palabra
+
+			// es vocal
+
+				//es la ultima vocal
+
+					// Cargar vocal a resultado 
+
+					// cargar lo que resta de la palabra (si no es la ultima letra**)
+
+					// romper el bucle
+
+				//No es la ultima vocal
+
+					// Cargar vocal a resultado
+
+					// Cargar divicion a resultado (-)
+
+
+			// no es vocal
+
+				// Cargar consonante a resultado
+
+
+	// REGLA 2 (dos consonantes entre vocal)
+
+
+		// verificar si tiene exepciones (pr, pl, br,bl... etc.,)
+		// Si tiene exepciones
+
+			// bucle para recorrer la palabra
+
+				// es vocal
+
+					//es la ultima vocal
+
+						// Cargar vocal a resultado 
+
+						// cargar lo que resta de la palabra (si no es la ultima letra**)
+
+						// romper el bucle
+
+					//No es la ultima vocal
+
+						// Cargar vocal a resultado
+
+						// variable consonantes faltantes = 2
+
+
+				// no es vocal
+
+					// consonantes faltantes == 2
+
+						// juntar consonante actual y la sigiente, para verificar si  es una de las exepciones
+						// es una exepcion
+
+							// cargar division (-)
+
+							// cargar 1ra consonante
+
+							// actualizar apuntador del bucle
+
+							// cargar 2da consonante
+
+						// no es una exepcion
+
+							// cargar 1ra consonante
+
+							// consonantes faltantes = 1
+
+
+
+					// consonantes faltantes < 2
+
+						// resultado,lengh >= 1
+
+							// Cargar divicion a resultado (-)
+
+							// Cargar consonante a resultado
+
+							// consonantes faltantes = 0
+
+						// resultado,lengh < 1
+				
+							// Cargar consonante a resultado
+
+
+		// Si NO tiene exepciones
+
+			//bucle para recorrer la palabra
+
+				// es vocal
+
+					//es la ultima vocal
+
+						// Cargar vocal a resultado 
+
+						// cargar lo que resta de la palabra (si no es la ultima letra**)
+
+						// romper el bucle
+
+					//No es la ultima vocal
+
+						// Cargar vocal a resultado
+
+						// variable consonantes faltantes = 2
+
+
+				// no es vocal
+
+					// consonantes faltantes == 2
+
+						// cargar 1ra consonante
+
+						// consonantes faltantes = 1
+
+
+					// consonantes faltantes < 2
+
+						// resultado,lengh >= 1
+
+							// Cargar divicion a resultado (-)
+
+							// Cargar consonante a resultado
+
+							// consonantes faltantes = 0
+
+						// resultado,lengh < 1
+				
+							// Cargar consonante a resultado 
+
+
+	// REGLA 3 (tres consonantes entre vocal) 
+
+
+		// verificar si tiene exepciones (pr, pl, br,bl... etc.,)
+		// Si tiene exepciones
+
+			// bucle para recorrer la palabra
+
+				// es vocal
+
+					//es la ultima vocal
+
+						// Cargar vocal a resultado 
+
+						// cargar lo que resta de la palabra (si no es la ultima letra**)
+
+						// romper el bucle
+
+					//No es la ultima vocal
+
+						// Cargar vocal a resultado
+
+						// variable consonantes faltantes = (cantidad de consonantes hasta la siguiente vocal)
+
+
+				// no es vocal
+
+					// consonantes faltantes == 3
+
+
+						//  carga a resultado la consonante actual
+
+						//  actualizar apuntador bucle
+
+						//  carga a resultado la consonante actual (+1)
+
+						//  cargar a resultado divicion (-)
+
+						//  actualizar apuntador bucle
+
+						//  carga a resultado la consonante actual (+2)
+								
+
+
+					// consonantes faltantes == 2
+
+						// juntar consonante actual y la sigiente, para verificar si  es una de las exepciones
+						// es una exepcion
+
+							// cargar division (-)
+
+							// cargar 1ra consonante
+
+							// actualizar apuntador del bucle
+
+							// cargar 2da consonante
+
+						// no es una exepcion
+
+							// cargar 1ra consonante
+
+							// consonantes faltantes = 1
+
+
+
+					// consonantes faltantes < 2
+
+						// resultado,lengh >= 1
+
+							// Cargar divicion a resultado (-)
+
+							// Cargar consonante a resultado
+
+							// consonantes faltantes = 0
+
+						// resultado,lengh < 1
+				
+							// Cargar consonante a resultado
+
+
+		// Si NO tiene exepciones
+
+			//bucle para recorrer la palabra
+
+				// es vocal
+
+					//es la ultima vocal
+
+						// Cargar vocal a resultado 
+
+						// cargar lo que resta de la palabra (si no es la ultima letra**)
+
+						// romper el bucle
+
+					//No es la ultima vocal
+
+						// Cargar vocal a resultado
+
+						// variable consonantes faltantes = (cantidad de consonantes hasta la siguiente vocal)
+
+
+				// no es vocal
+
+					// consonantes faltantes == 3
+
+						// cargar 1ra consonante
+
+						// consonantes faltantes = 2	
+
+					// consonantes faltantes == 2
+
+						// cargar 1ra consonante
+
+						// consonantes faltantes = 1
+
+						// Cargar divicion a resultado (-)
+
+
+					// consonantes faltantes < 2
+
+						// resultado,lengh >= 1
+
+							// Cargar consonante a resultado
+
+							// consonantes faltantes = 0
+
+						// resultado,lengh < 1
+				
+							// Cargar consonante a resultado
+
+
+	// REGLA 4 (cuatro consonantes entre vocal) 
+
+		// bucle para recorrer la palabra
+
+			// Es vocal
+
+				// 
+
+				// cantidad consonantes = 0
+
+				// Es la ultima vocal
+
+					// cargar resto de la palabra
+
+					// romper ciclo
+
+			// No es vocal
+
+				// cantidad consonantes ++				
+
+				// si cantidad consonantes == 3
+
+					// carga separador 
+
+				// cargar consonante a resultado
