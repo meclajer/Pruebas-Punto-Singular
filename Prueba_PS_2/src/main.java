@@ -13,232 +13,388 @@ public class main {
 
 	public static void main(String[] args) {
 		
-		//Objeto necesario para la entrada de los datos
+		//Objeto necesarios
 		Scanner mScanner = new Scanner(System.in);
+		Pattern pat = Pattern.compile("[pP][rR]|[pP][lL]|[bB][rR]|[bB][lL]|[fF][rR]|[fF][lL]|[tT][rR]|[tT][lL]|[dD][rR]|[dD][lL]|[cC][rR]|[cC][lL]|[gG][rR]|[cC][hH]|[lL][lL]|[rR][rR]");
 		
-		//Variables necesarias
-		String palabra, palabraSinExepciones[], palabraDividida;
-		char[] letras;
-		boolean[] vocal;
-		byte cantidadConsonantes = 0, contador = 0, apuntador = 0, ubicacionVocales[], cantidadExepciones = 0;
+		//Variables
+		String palabra, resultado = "";
+		char[] palabraPorLetras;
+		boolean esVocal[];
+		byte cantidadConsonantes = 0, contador = 0, cantidadVocales = 0, vocalesCruzadas = 0, consonantesFaltantes = 0, diferencia = 0;
 		
+
+		// Solicitar la palabra que se dividira
 		System.out.print("Programa 2.\n\tPalabra a evaluar: ");
 		palabra = mScanner.next();
 		mScanner.close();
 		
-		//separar la palabra por letras
-		letras = palabra.toCharArray();
+		Matcher mat = pat.matcher(palabra);
+
+
+		// dividir la palabra por letras, en un arreglo
+		palabraPorLetras = palabra.toCharArray();
 		
-		//identificar cuales son vocales
-		vocal = new boolean[letras.length];
-		for (int i = 0; i < letras.length; i++) {
-			if ( 	String.valueOf( letras[i] ).equalsIgnoreCase("a") || String.valueOf( letras[i] ).equalsIgnoreCase("á") || 
-					String.valueOf( letras[i] ).equalsIgnoreCase("e") || String.valueOf( letras[i] ).equalsIgnoreCase("é") || 
-					String.valueOf( letras[i] ).equalsIgnoreCase("i") || String.valueOf( letras[i] ).equalsIgnoreCase("í") || 
-					String.valueOf( letras[i] ).equalsIgnoreCase("o") || String.valueOf( letras[i] ).equalsIgnoreCase("ó") || 
-					String.valueOf( letras[i] ).equalsIgnoreCase("u") || String.valueOf( letras[i] ).equalsIgnoreCase("ú") ) {
-				vocal[i] = true;
+
+		// detectar las vocales y su ubicacion asi como la cantidad de consonantes entre vocales
+		esVocal = new boolean[palabraPorLetras.length];
+		for (int i = 0; i < esVocal.length; i++) {
+			
+			//Es vocal
+			if (String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("a") || String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("Ã¡") || 
+				String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("e") || String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("Ã©") || 
+				String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("i") || String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("Ã­") || 
+				String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("o") || String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("Ã³") || 
+				String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("u") || String.valueOf( palabraPorLetras[i] ).equalsIgnoreCase("Ãº") ) {
+				esVocal[i] = true;
+				
+				//si la cantidad de consonantes es mayor a la registrada se remplaza el valor
 				if ( cantidadConsonantes < contador ) {
 					cantidadConsonantes = contador;
 				}
 				contador = 0;
-				apuntador++;
-			} else {
-				vocal[i] = false;
+				cantidadVocales++;
+			} else { //Es consonante
+				esVocal[i] = false;
 				contador++;
 			}
 		}
 		
-		//recorrer la palabra para guardar la ubicacion de las vocales
-		ubicacionVocales = new byte[apuntador];
-		apuntador = 0;
-		for (byte i = 0; i < vocal.length; i++) {
-			if ( vocal[i] ) {
-				ubicacionVocales[apuntador] = i;
-				apuntador++;
-			}
-		}
-		
-		apuntador = 0;
-		
-		
-		//ver la cantidad de consonantes entre vocal y vocal, para identificar a que regla pertenecen
+
+		// tomando el dato de cantidad de consonantes entre vocales dirigir a la regla que le pertenece (1 a 4)
 		switch (cantidadConsonantes) {
-			case 1: {//regla 1 (Una sola consonante entre dos vocales se agrupa con la vocal que sigue)
+			case 1: // REGLA 1 (una consonante entre vocal)
+		
+				for (int i = 0; i < esVocal.length; i++) {
 				
-				//cortar por secciones hasta cada vocal
-				palabraDividida = palabra.substring(0, ubicacionVocales[apuntador])+"-";
-				apuntador++;
-				for (int i = ubicacionVocales[0]; i < ubicacionVocales.length && apuntador <= letras.length ; i = i) {
-					//Cargar resultado a variable de resultado String
-					palabraDividida = palabraDividida +"-"+ palabraDividida.substring(i, ubicacionVocales[apuntador+1]);
-					apuntador++;
-					i = ubicacionVocales[apuntador];
+					if (esVocal[i]) {
+						vocalesCruzadas++;
+						if (vocalesCruzadas == cantidadVocales) {//es la ultima vocal
+
+							resultado += palabraPorLetras[i];
+
+							// cargar lo que resta de la palabra (si no es la ultima letra**)
+							if ( i < esVocal.length ) {
+								resultado += palabra.substring(i+1);
+							}
+
+							// romper el bucle
+							break;
+
+						} else {//No es la ultima vocal
+							
+							// Cargar vocal a resultado
+							resultado += palabraPorLetras[i];
+							
+							// Cargar divicion a resultado (-)
+							resultado += "-";
+						}
+
+					} else { //Es consonante
+						// Cargar consonante a resultado
+						resultado += palabraPorLetras[i];
+					}	
 				}
-				
-				//agrego la letra faltante de haber
-				if ( ubicacionVocales[apuntador] < letras.length ) {
-					for (int i = ubicacionVocales[apuntador]; i <= letras.length; i++) {
-						palabraDividida = palabraDividida + letras[i];
-					}
-				}
-	
-				
 				break;
-			}
-			case 2: {//regla 2 (Dos consonantes entre dos vocales se agrupan una para cada vocal.)
-		  		
-				//buscar las exepciones de grupos consonanticos: pr, pl, br, bl, fr, fl, tr, tl, dr, dl, cr, cl, gr, ch, ll o rr
-				Pattern pat = Pattern.compile("[pP][rR]|[pP][lL]|[bB][rR]|[bB][lL]|[fF][rR]|[fF][lL]|[tT][rR]|[tT][lL]|[dD][rR]|[dD][lL]|[cC][rR]|[cC][lL]|[gG][rR]|[cC][hH]|[lL][lL]|[rR][rR]");
-				Matcher mat = pat.matcher(palabra);
 				
-				//De contar con exepciones reestructurar uniendo las consonantes de la exepcion (bucle)
-				ArrayList<String> letrasReestructuradas = new ArrayList<String>();
+				
+			case 2: // REGLA 2 (dos consonantes entre vocal)
+
+				// verificar si tiene exepciones (pr, pl, br, bl, etc.,)// Si tiene exepciones
 				if (mat.find()) {
-					for (int i = 0; i < letras.length-1; i++) {
-						if ((String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("pr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("pl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("br") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("bl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("fr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("fl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("tr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("tl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("dr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("dl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("cr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("cl") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("gr") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("ch") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("ll") ||
-							(String.valueOf(letras[i])+String.valueOf(letras[i+1])).equalsIgnoreCase("rr") ) {
-							letrasReestructuradas.add( String.valueOf(letras[i]) + String.valueOf(letras[i+1]) );
-							i += 1;
-						} else {
-							letrasReestructuradas.add( String.valueOf(letras[i]) );
+
+					for (int i = 0; i < esVocal.length; i++) {
+						if (esVocal[i]) {
+							vocalesCruzadas++;
+							if (vocalesCruzadas == cantidadVocales) {//es la ultima vocal
+
+								// Cargar vocal a resultado
+								resultado += palabraPorLetras[i];
+
+								// cargar lo que resta de la palabra (si no es la ultima letra**)
+								if ( i < esVocal.length ) {
+									resultado += palabra.substring(i+1);
+								}
+								
+								break;
+
+							} else {//No es la ultima vocal
+
+								// Cargar vocal a resultado
+								resultado += palabraPorLetras[i];
+
+								// variable consonantes faltantes = 2
+								consonantesFaltantes = 2;
+
+							}
+						} else {// no es vocal
+							if ( consonantesFaltantes == 2 ) {
+
+								// juntar consonante actual y la sigiente, para verificar si  es una de las exepciones
+								String cadString = String.valueOf(palabraPorLetras[i]) + String.valueOf(palabraPorLetras[i+1]);
+								Matcher matCadena2 = pat.matcher(cadString);
+								
+								if ( matCadena2.find() ) {// es una exepcion
+									resultado += "-";
+									resultado += palabraPorLetras[i];
+									i++;
+									resultado += palabraPorLetras[i];
+								} else {// no es una exepcion
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 1;
+								}
+
+							} if (consonantesFaltantes < 2) {// consonantes faltantes < 2
+								
+								// resultado,lengh >= 1
+								if ( resultado.length() >= 1 ) {
+									resultado += "-";
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 0;
+								} else {// resultado,lengh < 1
+									// Cargar consonante a resultad
+									
+								}
+							}
 						}
-					}
-					
-					
-					apuntador = 0;
-					
-					
-					//reidentificar las vocales
-					palabraSinExepciones = new String[letrasReestructuradas.size()];
-					vocal = new boolean[letrasReestructuradas.size()];
-					for (int i = 0; i < palabraSinExepciones.length; i++) {
-						palabraSinExepciones[i] = letrasReestructuradas.get(i);
-						if ( 	String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("a") || String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("á") || 
-								String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("e") || String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("é") || 
-								String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("i") || String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("í") || 
-								String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("o") || String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("ó") || 
-								String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("u") || String.valueOf( palabraSinExepciones[i] ).equalsIgnoreCase("ú") ) {
-							vocal[i] = true;
-							apuntador++;
-						} else {
-							vocal[i] = false;
-						}
-					}
-					
-					
-					//recorrer la palabra para guardar la ubicacion de las vocales
-					ubicacionVocales = new byte[apuntador];
-					apuntador = 0;
-					for (byte i = 0; i < vocal.length; i++) {
-						if ( vocal[i] ) {
-							ubicacionVocales[apuntador] = i;
-							apuntador++;
-						}
-					}
-					
-					
-					
-				} else {
-					//Si no tiene ecepciones acomodo las letras en palabra sin exepciones
-					palabraSinExepciones = new String[letras.length];
-					for (int i = 0; i <= palabraSinExepciones.length; i++) {
-						palabraSinExepciones[i] = String.valueOf( letras[i] );
-					}
-				}
-				
-		
-				apuntador = 0;
-				palabraDividida = palabra.substring(0, ubicacionVocales[apuntador+1])+"-";
-				apuntador++;
-				
-				//Bucle para cortar la palabra conforme a la regla
-				for (int i = ubicacionVocales[apuntador]; i < palabraSinExepciones.length; i = i) {
-					
-					//si hay dos consonantes una consonante para cada vocal
-					if ( (i - ubicacionVocales[apuntador+1] ) > 1 ) {
-						palabraDividida = palabraDividida + palabraSinExepciones[i+1] + "-" + palabraSinExepciones[i+2] + palabraSinExepciones[i+3];
-						i = i+3;
-					} else { //si entre vocal y vocal solo hay una consonante se agrupara a la siguiente vocal
-						palabraDividida = palabraDividida + "-" + palabraSinExepciones[i+1] + palabraSinExepciones[i+2];
-						i += 2;
-					}
+					}//final bule
+				} else {// Si NO tiene exepciones
+
+					//bucle para recorrer la palabra
+					for (int i = 0; i < esVocal.length; i++) {
+
+						if ( esVocal[i] ) {
+							vocalesCruzadas++;
+							if (vocalesCruzadas == cantidadVocales) {//es la ultima vocal
+								resultado += palabraPorLetras[i];
+								// cargar lo que resta de la palabra (si no es la ultima letra**)
+								if ( i < esVocal.length ) {
+									resultado += palabra.substring(i+1);
+								}
+								break;
+
+							} else {//No es la ultima vocal
+								resultado += palabraPorLetras[i];
+								consonantesFaltantes = 2;
+							}
+
+						} else {// no es vocal
+
+							// consonantes faltantes == 2
+							if ( consonantesFaltantes == 2 ) {
+								resultado += palabraPorLetras[i];
+								consonantesFaltantes = 1;
+							
+							} else {// consonantes faltantes < 2
+
+								// resultado,lengh >= 1
+								if ( resultado.length() >= 1 ) {
+									// dividir palabra (-)
+									resultado += "-";
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 0;
+									
+								} else {// resultado,lengh < 1
+									// Cargar consonante a resultado 
+									resultado += palabraPorLetras[i];
+								}								
 						
+							}
+						}
+					}//final bucle
+
 				}
-					
-					
-				//agrego la letra faltante de haber
-				if ( ubicacionVocales[apuntador] < letras.length ) {
-					for (int i = ubicacionVocales[apuntador]; i <= letras.length; i++) {
-						palabraDividida = palabraDividida + letras[i];
+				break;
+				
+				
+			case 3: // REGLA 3 (tres consonantes entre vocal) 
+
+				// verificar si tiene exepciones (pr, pl, br,bl... etc.,)
+				// Si tiene exepciones
+				if (mat.find()) {
+
+					// bucle para recorrer la palabra
+					for (int i = 0; i < esVocal.length; i++) {
+						
+						if ( esVocal[i] ) {// es vocal
+							vocalesCruzadas++;
+							if (vocalesCruzadas == cantidadVocales) {//es la ultima vocal
+								resultado += palabraPorLetras[i];
+								// cargar lo que resta de la palabra (si no es la ultima letra**)
+								if ( i < esVocal.length ) {
+									resultado += palabra.substring(i+1);
+								}
+								break;
+
+							} else {//No es la ultima vocal
+								resultado += palabraPorLetras[i];
+
+								// variable consonantes faltantes = (cantidad de consonantes hasta la siguiente vocal)
+								for (int j = i; j < esVocal.length; j++) {
+									if ( !esVocal[j] )
+										diferencia++;
+									else
+										break;
+								}
+								consonantesFaltantes = diferencia;
+
+							}
+						} else {// no es vocal
+
+							// consonantes faltantes == 3
+							if ( consonantesFaltantes == 3 ) {
+								
+								//  carga a resultado la consonante actual
+								resultado += palabraPorLetras[i];
+
+								//  actualizar apuntador bucle
+								i++;
+								
+								//  carga a resultado la consonante actual (+1)
+								resultado += palabraPorLetras[i];
+
+								//  cargar a resultado divicion (-)
+								resultado += ("-");
+
+								//  actualizar apuntador bucle
+								i++;
+
+								//  carga a resultado la consonante actual (+2)
+								resultado += palabraPorLetras[i];
+										
+							}
+							// consonantes faltantes == 2
+							if ( consonantesFaltantes == 2 ) {
+
+								// juntar consonante actual y la sigiente, para verificar si  es una de las exepciones
+								String cadString = String.valueOf(palabraPorLetras[i]) + String.valueOf(palabraPorLetras[i+1]);
+								Matcher matCadena2 = pat.matcher(cadString);
+								
+								// es una exepcion
+								if ( matCadena2.find() ) {								
+									// cargar division (-)
+									resultado += ("-");
+
+									// cargar 1ra consonante
+									resultado += palabraPorLetras[i];
+
+									// actualizar apuntador del bucle
+									i++;
+
+									// cargar 2da consonante
+									resultado += palabraPorLetras[i];
+
+								} else {// no es una exepcion
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 1;
+								}
+							}
+							if ( consonantesFaltantes < 2 ) {
+								if ( resultado.length() >= 1 ) {
+									resultado += "-";
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 0;									
+								} else {
+									// Cargar consonante a resultado
+									resultado += palabraPorLetras[i];
+								}
+							}
+						}
+					}// final bucle
+				} else {// Si NO tiene exepciones
+
+					for (int i = 0; i < esVocal.length; i++) {
+
+						if (esVocal[i]) {
+							vocalesCruzadas++;
+							if (vocalesCruzadas == cantidadVocales) {//es la ultima vocal
+								resultado += palabraPorLetras[i]; 
+
+								// cargar lo que resta de la palabra (si no es la ultima letra**)
+								if ( i < esVocal.length ) {
+									resultado += palabra.substring(i+1);
+								}
+
+								break;
+
+							} else {//No es la ultima vocal
+
+								resultado += palabraPorLetras[i];
+
+								// variable consonantes faltantes = (cantidad de consonantes hasta la siguiente vocal)
+								for (int j = i; j < esVocal.length; j++) {
+									if ( !esVocal[j] )
+										diferencia++;
+									else
+										break;
+								}
+								consonantesFaltantes = diferencia;
+							}
+
+						} else {// no es vocal
+
+							if ( consonantesFaltantes == 3 ) {
+								resultado += palabraPorLetras[i];
+								consonantesFaltantes = 2;
+							}
+
+							if ( consonantesFaltantes == 2 ) {
+								resultado += palabraPorLetras[i];
+								consonantesFaltantes = 1;
+								resultado += "-";
+							}
+
+							if (consonantesFaltantes < 2) {
+								if ( resultado.length() >= 1 ) {
+									resultado += palabraPorLetras[i];
+									consonantesFaltantes = 0;
+								} else {// resultado,lengh < 1
+									resultado += palabraPorLetras[i];
+								}									
+							}
+						
+						}
+					}//final bucle
+				}
+				break;
+				
+			case 4: // REGLA 4 (cuatro consonantes entre vocal) 
+
+				byte cantConsonantes = 0;
+				
+				for (int i = 0; i < esVocal.length; i++) {
+
+					if ( esVocal[i] ) {
+
+						cantConsonantes = 0;
+						// Es la ultima vocal
+						vocalesCruzadas++;
+						if (vocalesCruzadas == cantidadVocales) {
+							resultado += palabra.substring(i+1);
+							break;
+						} else {// No es la ultima vocal
+							resultado += palabraPorLetras[i];
+						}
+
+					} else {// No es vocal
+
+						cantConsonantes++;				
+
+						// si cantidad consonantes == 3
+						if (cantConsonantes == 3) {
+							resultado += ("-");
+						}
+						resultado += palabraPorLetras[i];
+				
 					}
 				}
-				
 				break;
-					}
-			case 3: {//regla 3 (Tres consonantes en medio de dos vocales se agrupan dos con la primera vocal y la tercera con la vocal que sigue.)
-				//buscar las exepciones de grupos consonanticos: pr, pl, br, bl, fr, fl, tr, tl, dr, dl, cr, cl, gr, ch, ll o rr
-				
-				
-				//Reestructurar uniendo las consonantes de la exepcion (bucle)
-	
-				//reidentificar las vocales y su ubicacion
+		}// fin swich
 		
-				//Bucle para cortar la palabra conforme a la regla
-					//si hay 3 consonantes dos para la vocal izquierda y una para la derecha
-						//Cargar resultado a variable de resultado String
-		
-					//si entre vocal y vocal hay 2 consonantes, una consonante para cada vocal
-						//Cargar resultado a variable de resultado String
-	
-					//si entre vocal y vocal hay 1 consonantes dejar para la vocal derecha
-						//Cargar resultado a variable de resultado String
-				
-				
-				break;
-			}
-			case 4: {//regla 4 (Cuatro consonantes en medio de dos vocales se agrupan dos con la primera vocal y las otras dos con la vocal que sigue.)
-				//Bucle para cortar la palabra conforme a la regla
-				//dividir las 4 consonantes 2 para cada vocal (izq y derecha)
-					//Cargar resultado a variable de resultado String
-	
-				
-				break;
-			}
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + cantidadConsonantes);
-		}//Fin de switch de reglas
-		
-		
-		//Mostrar en pantalla el resultado
+		System.out.println("\n\nResultado:\n\t"+resultado);
 		
 	}
 
-}
-
-class Exepciones{
-	
-	public boolean tieneExepciones() {
-		
-		
-		
-		return false;
-	}
-	
 }
 
 
